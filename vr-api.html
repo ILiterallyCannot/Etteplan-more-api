@@ -37,9 +37,10 @@
         var request = new XMLHttpRequest();
         var dataList = document.getElementById('station-list');
         function useValue() {
-            var getStation = document.getElementById('stationList').value;
-            alert(this.station.stationShortCode); 
-            getStation.value = '';
+            var e = document.getElementById('stationList');
+            e.options[e.options.selectedIndex].selected = true;
+            alert(getId); 
+            e.value = '';
         };
         
         request.open('GET', 'https://rata.digitraffic.fi/api/v1/metadata/stations', true);
@@ -52,7 +53,7 @@
                     const listItem = document.createElement('option')
                     const shortCode = station.stationShortCode
                     listItem.textContent = station.stationName
-                    listItem.setAttribute('id', 'item')
+                    listItem.setAttribute('id', shortCode)
                     dataList.appendChild(listItem)
                     
                 });
