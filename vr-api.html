@@ -40,7 +40,7 @@
             var e = document.getElementById('stationList');
             e.options[e.options.selectedIndex].selected = true;
             alert(getId); 
-            e.value = '';
+            e.value = ''; 
         };
         
         request.open('GET', 'https://rata.digitraffic.fi/api/v1/metadata/stations', true);
