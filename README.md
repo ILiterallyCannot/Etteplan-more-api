@@ -15,4 +15,8 @@ App found here: https://codepen.io/I_Literally_can_not/pen/JVopaQ,
 
 and here: https://student.labranet.jamk.fi/~L8314/reactapp/
 
-and of course here in codepen. There are two versons of the app, one built using a standard html and js file, where one can see the entire code, and another built using node.js and npm. These hide the actual react files from the public where they are not visible. All versions (github, labranet, codepen) are exactly the same and fully working as I finished it. Enjoy!
+and of course, here in codepen. 
+
+There are two versons of the app, one built using a standard html and js file, where one can see the entire code, and another built using node.js and npm. These hide the actual react files from the public where they are not visible. found here: https://github.com/ILiterallyCannot/Etteplan-more-api/tree/master/vr-api
+
+All versions (github, labranet, codepen) are exactly the same and fully working as I finished it. Enjoy!
