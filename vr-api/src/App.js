@@ -69,7 +69,7 @@ class App extends React.Component {
       )
       .catch(error => this.setState({ error, isLoaded: false }));
   }
-  getTrainType = (traincat, commID, trainnum) => {
+  getTrainType = (traincat, commID, trainnum) => {       //maps the live trains and returns the station names from the station api using the short codes from the live trains api
     var thisTraintype = this.state.liveTrains.filter(
       train =>
         traincat === train.trainCategory &&
@@ -78,10 +78,6 @@ class App extends React.Component {
     );
     //console.log(thisTraintype[0])
     for (var i = 0; i < thisTraintype.length; i++) {
-      //console.log(thisTraintype[i].commuterLineID)
-      //console.log(commID)
-      //console.log(thisTraintype[i].trainNumber)
-      //console.log(trainnum)
       if (
         thisTraintype[i].trainNumber === trainnum &&
         thisTraintype[i].commuterLineID === ""
@@ -97,7 +93,7 @@ class App extends React.Component {
     }
   };
   getTrainNumber = (versionnum) => {
-    var thisTraintype = this.state.liveTrains.filter(
+    var thisTraintype = this.state.liveTrains.filter(       //maps the live trains and returns only the numbers
       train =>
         versionnum === train.version
     );
@@ -115,7 +111,7 @@ class App extends React.Component {
     );
     return newstation[0].stationName;
   };
-  getScheduledTime = (thisCode, traintype, trainnumber, trainData) => {
+  getScheduledTime = (thisCode, traintype, trainnumber, trainData) => { //Finds the time of the train at the current active station
     const sortedliveTrains = []
     var thisTrain = trainData.filter(
       train => trainnumber === train.trainNumber && traintype === train.trainType
@@ -127,7 +123,7 @@ class App extends React.Component {
         //console.log(thisTrain[0].timeTableRows[i].scheduledTime)
         var date = new Date(thisTrain[0].timeTableRows[i].scheduledTime);
         var result = date.toLocaleString("en-GB", {
-          timeZone: "Europe/Helsinki",
+          timeZone: "Europe/Helsinki",                  //filters the time and displays only the hours and minutes
           //year: 'numeric',
           //month: 'short',
           //day: 'numeric',
@@ -145,7 +141,7 @@ class App extends React.Component {
       }
     }    
   };
-  getArrivals() {
+  getArrivals() {       //sets the state of arrivals and departure api links and renders the updated table
     this.setState({
       arrivaltime: "180",
       departuretime: "0",
@@ -165,7 +161,7 @@ class App extends React.Component {
       departures: "active"
     })
   }
-  onSort = (column, versionnum) => (e) => { //var date = new Date(thisTrain[0].timeTableRows[i].scheduledTime);
+  onSort = (column, versionnum) => (e) => { //this sorts the table by the time converted to unix, but it doesnt work as i wanted it to.
     const direction = 'asc'
     const sortedData = this.state.liveTrains.sort((a, b) => {
       var sortA = a.timeTableRows.filter( train => 
