@@ -11,6 +11,8 @@ Features include autocomplete station searches, and sorting the table by arrivin
 
 But for someone who has nothing more than a few weeks of classroom lessons and almost 0 knowledge of how react works, I would say this app was a lot of fun to make.
 
-App found here: https://codepen.io/I_Literally_can_not/pen/JVopaQ
+App found here: https://codepen.io/I_Literally_can_not/pen/JVopaQ,
+
 and here: https://student.labranet.jamk.fi/~L8314/reactapp/
+
 and of course here in codepen.
