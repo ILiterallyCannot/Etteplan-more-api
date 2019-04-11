@@ -1,66 +1,12 @@
-class TrainSchedule extends React.Component {
-  constructor(props) {
-    super(props);
+import React, { Component } from 'react';
+import './App.css';
 
-  }
-  render() {
-     var schedules = this.refs.Schedules
-    const traindata = this.props.traindata;
-    //dataSorter = this.datasorter;
-    return (
-      <table id="Schedules" ref="Schedules">
-        <thead className="tablehead">
-          <tr>
-            <th>Train</th>
-            <th>Departure Station</th>
-            <th>Arrival Station</th>
-            <th id="sortthis" onClick={e => this.props.onSort()}>Time (click to sort by time)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {traindata.map(train => (
-      <tr key={train.trainNumber}>
-            <td>
-              {this.props.getType(
-                train.trainCategory,
-                train.commuterLineID,
-                train.trainNumber
-              )}
-            </td>
-            <td>
-              {this.props.getName(
-                train.timeTableRows[0].stationShortCode
-              )}
-            </td>
-            <td>
-              {this.props.getName(
-                train.timeTableRows[train.timeTableRows.length - 1]
-                  .stationShortCode
-              )}
-            </td>
-            <td>
-              {this.props.getTime(
-                this.props.stationcode,
-                train.trainType,
-                train.trainNumber,
-                traindata
-              )}
-            </td>
-          </tr>
-          ))}
-    </tbody>
-      </table>
-    )
-  }
-}
-
-class MyComponent extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       error: null,
       isLoaded: false,
-      isUpdated:false,
       stations: [],
       liveTrains: [],
       thisVersionNumber: 0,
@@ -90,7 +36,7 @@ class MyComponent extends React.Component {
   
   handleSubmit(event) {
     let currentStation = this.state.stations.filter(
-      station => station.stationName == this.state.value
+      station => station.stationName === this.state.value
     );
     this.setState({ thisStationCode: currentStation[0].stationShortCode, thisVersionNumber: currentStation[0].version });
     fetch("https://rata.digitraffic.fi/api/v1/live-trains/station/" + currentStation[0].stationShortCode + "?version=1&arrived_trains=0&arriving_trains=" + this.state.arriving + "&departed_trains=0&departing_trains=" + this.state.departing + "&minutes_before_departure=" + this.state.departuretime + "&minutes_after_departure=0&minutes_before_arrival=" + this.state.arrivaltime + "&minutes_after_arrival=0&include_nonstopping=false"
@@ -98,22 +44,18 @@ class MyComponent extends React.Component {
       .then(res => res.json())
       .then(data =>
         this.setState({
-          liveTrains: data,
-          isUpdated: false
+          liveTrains: data
         })
       )
       
       .catch(error => this.setState({ error, isLoaded: false }));
-      console.log(this.state.isUpdated)
     event.preventDefault();
     
   }
 
   componentDidMount() {
     this.fetchStations();
-  }
-  
-  componentDidUpdate(a,b) {
+    this.onSort('sortTrains',this.state.thisStationCode)
   }
 
   fetchStations() {
@@ -130,9 +72,9 @@ class MyComponent extends React.Component {
   getTrainType = (traincat, commID, trainnum) => {
     var thisTraintype = this.state.liveTrains.filter(
       train =>
-        traincat == train.trainCategory &&
-        commID == train.commuterLineID &&
-        trainnum == train.trainNumber
+        traincat === train.trainCategory &&
+        commID === train.commuterLineID &&
+        trainnum === train.trainNumber
     );
     //console.log(thisTraintype[0])
     for (var i = 0; i < thisTraintype.length; i++) {
@@ -141,8 +83,8 @@ class MyComponent extends React.Component {
       //console.log(thisTraintype[i].trainNumber)
       //console.log(trainnum)
       if (
-        thisTraintype[i].trainNumber == trainnum &&
-        thisTraintype[i].commuterLineID == ""
+        thisTraintype[i].trainNumber === trainnum &&
+        thisTraintype[i].commuterLineID === ""
       ) {
         return thisTraintype[i].trainType + thisTraintype[i].trainNumber;
       } else {
@@ -157,11 +99,11 @@ class MyComponent extends React.Component {
   getTrainNumber = (versionnum) => {
     var thisTraintype = this.state.liveTrains.filter(
       train =>
-        versionnum == train.version
+        versionnum === train.version
     );
     for (var i = 0; i < thisTraintype.length; i++) {
       if (
-        thisTraintype[i].version == versionnum
+        thisTraintype[i].version === versionnum
       ) {
         return thisTraintype[i].trainNumber;
       } 
@@ -169,19 +111,19 @@ class MyComponent extends React.Component {
   };
   getStationName = shortcode => {
     let newstation = this.state.stations.filter(
-      station => station.stationShortCode == shortcode
+      station => station.stationShortCode === shortcode
     );
     return newstation[0].stationName;
   };
   getScheduledTime = (thisCode, traintype, trainnumber, trainData) => {
     const sortedliveTrains = []
     var thisTrain = trainData.filter(
-      train => trainnumber == train.trainNumber && traintype == train.trainType
+      train => trainnumber === train.trainNumber && traintype === train.trainType
     );
-    //console.log(thisTrain,thisCode,traintype,trainnumber)
+    console.log(thisTrain,thisCode,traintype,trainnumber)
     for (var i = 0; i < thisTrain[0].timeTableRows.length; i++) {
       //console.log(thisTrain[i].timeTableRows.length)
-      if (thisTrain[0].timeTableRows[i].stationShortCode == thisCode) {
+      if (thisTrain[0].timeTableRows[i].stationShortCode === thisCode) {
         //console.log(thisTrain[0].timeTableRows[i].scheduledTime)
         var date = new Date(thisTrain[0].timeTableRows[i].scheduledTime);
         var result = date.toLocaleString("en-GB", {
@@ -196,15 +138,12 @@ class MyComponent extends React.Component {
         });
           
           sortedliveTrains.push({result})
-          
           //console.log(sortedliveTrains[0].result)
-          //console.log(sortedliveTrains)
+          console.log(sortedliveTrains)
           return sortedliveTrains[0].result
-        
-        
+     
       }
-    }
- 
+    }    
   };
   getArrivals() {
     this.setState({
@@ -227,14 +166,13 @@ class MyComponent extends React.Component {
     })
   }
   onSort = (column, versionnum) => (e) => { //var date = new Date(thisTrain[0].timeTableRows[i].scheduledTime);
-    console.log("Sort function called")
     const direction = 'asc'
     const sortedData = this.state.liveTrains.sort((a, b) => {
       var sortA = a.timeTableRows.filter( train => 
-        versionnum == train.stationShortCode
+        versionnum === train.stationShortCode
       );
       var sortB = b.timeTableRows.filter( train => 
-        versionnum == train.stationShortCode
+        versionnum === train.stationShortCode
       );
       if (column === 'sortTrains') {
         const nameA = new Date(sortA[0].scheduledTime).getTime()
@@ -257,8 +195,7 @@ class MyComponent extends React.Component {
       sort: {
         column,
         direction,
-      },
-      isUpdated:true
+      }
     });
   };
   render() {
@@ -271,10 +208,10 @@ class MyComponent extends React.Component {
       return (
         <div>
           <header>
-                <h1>Simple VR API with react</h1>
+            <h1>Simple VR API with react</h1>
           </header>
           <form id="form" onSubmit={this.handleSubmit}>
-          <input
+            <input
               type="text"
               id="stationList"
               list="station-list"
@@ -299,11 +236,53 @@ class MyComponent extends React.Component {
             <input type="submit" className={this.state.arrivals} id="btn" onClick={this.getArrivals}  value="Arrivals" /><input id="btn" className={this.state.departures} type="submit" onClick={this.getDepartures} value="Departures" />
           </form>
 
-          <TrainSchedule onFilteredChange={this.onSort} traindata={this.state.liveTrains} stationcode={this.state.thisStationCode} getTime={this.getScheduledTime} getName={this.getStationName} getType={this.getTrainType} onSort={this.onSort('sortTrains',this.state.thisStationCode)}/>
+          <table id="Schedules" ref="Schedules">
+        <thead className="tablehead">
+          <tr>
+            <th>Train</th>
+            <th>Departure Station</th>
+            <th>Arrival Station</th>
+            <th id="sortthis" onClick={this.onSort('sortTrains',this.state.thisStationCode)}>Time (click to sort by time)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.state.liveTrains.map(train => (
+      <tr key={train.trainNumber}>
+            <td>
+              {this.getTrainType(
+                train.trainCategory,
+                train.commuterLineID,
+                train.trainNumber
+              )}
+            </td>
+            <td>
+              {this.getStationName(
+                train.timeTableRows[0].stationShortCode
+              )}
+            </td>
+            <td>
+              {this.getStationName(
+                train.timeTableRows[train.timeTableRows.length - 1]
+                  .stationShortCode
+              )}
+            </td>
+            <td>
+              {this.getScheduledTime(
+                this.state.thisStationCode,
+                train.trainType,
+                train.trainNumber,
+                this.state.liveTrains
+              )}
+            </td>
+          </tr>
+          ))}
+    </tbody>
+      </table>
 
         </div>
       );
     }
   }
 }
-ReactDOM.render(<MyComponent />, document.getElementById("main"));
+
+export default App;
