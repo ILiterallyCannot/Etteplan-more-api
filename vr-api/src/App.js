@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,6 +9,7 @@ class App extends React.Component {
       isLoaded: false,
       stations: [],
       liveTrains: [],
+      sortedliveTrains: [],
       thisVersionNumber: 0,
       sort: {
       column: null,
@@ -39,7 +40,9 @@ class App extends React.Component {
       station => station.stationName === this.state.value
     );
     this.setState({ thisStationCode: currentStation[0].stationShortCode, thisVersionNumber: currentStation[0].version });
-    fetch("https://rata.digitraffic.fi/api/v1/live-trains/station/" + currentStation[0].stationShortCode + "?version=1&arrived_trains=0&arriving_trains=" + this.state.arriving + "&departed_trains=0&departing_trains=" + this.state.departing + "&minutes_before_departure=" + this.state.departuretime + "&minutes_after_departure=0&minutes_before_arrival=" + this.state.arrivaltime + "&minutes_after_arrival=0&include_nonstopping=false"
+    fetch("https://rata.digitraffic.fi/api/v1/live-trains/station/" + currentStation[0].stationShortCode + "?version=1&arrived_trains=0&arriving_trains=" + this.state.arriving + 
+    "&departed_trains=0&departing_trains=" + this.state.departing + "&minutes_before_departure=" + this.state.departuretime + "&minutes_after_departure=0&minutes_before_arrival=" + this.state.arrivaltime + 
+    "&minutes_after_arrival=0&include_nonstopping=false"
     )
       .then(res => res.json())
       .then(data =>
@@ -54,11 +57,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log("mounting")
     this.fetchStations();
-    this.onSort('sortTrains',this.state.thisStationCode)
   }
 
   fetchStations() {
+    console.log("fetching")
     fetch("https://rata.digitraffic.fi/api/v1/metadata/stations")
       .then(res => res.json())
       .then(data =>
@@ -111,17 +115,19 @@ class App extends React.Component {
     );
     return newstation[0].stationName;
   };
-  getScheduledTime = (thisCode, traintype, trainnumber, trainData) => { //Finds the time of the train at the current active station
+  getScheduledTime = (thisCode, traintype, trainnumber, trainData) =>{ //Finds the time of the train at the current active station
+    //console.log("Get scheduled time")
     const sortedliveTrains = []
     var thisTrain = trainData.filter(
       train => trainnumber === train.trainNumber && traintype === train.trainType
     );
-    console.log(thisTrain,thisCode,traintype,trainnumber)
+    //console.log(thisTrain,thisCode,traintype,trainnumber)
     for (var i = 0; i < thisTrain[0].timeTableRows.length; i++) {
       //console.log(thisTrain[i].timeTableRows.length)
       if (thisTrain[0].timeTableRows[i].stationShortCode === thisCode) {
         //console.log(thisTrain[0].timeTableRows[i].scheduledTime)
         var date = new Date(thisTrain[0].timeTableRows[i].scheduledTime);
+        
         var result = date.toLocaleString("en-GB", {
           timeZone: "Europe/Helsinki",                  //filters the time and displays only the hours and minutes
           //year: 'numeric',
@@ -132,16 +138,19 @@ class App extends React.Component {
           //second: 'numeric',
           hour12: false
         });
-          
-          sortedliveTrains.push({result})
+        
+        console.log(sortedliveTrains)
+        sortedliveTrains.push(result)
+        return sortedliveTrains
           //console.log(sortedliveTrains[0].result)
-          console.log(sortedliveTrains)
-          return sortedliveTrains[0].result
-     
+            
       }
+      
+      
     }    
   };
   getArrivals() {       //sets the state of arrivals and departure api links and renders the updated table
+    
     this.setState({
       arrivaltime: "180",
       departuretime: "0",
@@ -162,6 +171,7 @@ class App extends React.Component {
     })
   }
   onSort = (column, versionnum) => (e) => { //this sorts the table by the time converted to unix, but it doesnt work as i wanted it to.
+    //console.log("sorted")
     const direction = 'asc'
     const sortedData = this.state.liveTrains.sort((a, b) => {
       var sortA = a.timeTableRows.filter( train => 
@@ -184,8 +194,6 @@ class App extends React.Component {
         return 0;
       }
     });
-    
-    
     this.setState({
       data: sortedData,
       sort: {
@@ -193,6 +201,9 @@ class App extends React.Component {
         direction,
       }
     });
+    
+    
+    
   };
   render() {
     const { error, isLoaded, stations } = this.state;
