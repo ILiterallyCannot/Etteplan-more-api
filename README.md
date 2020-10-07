@@ -1,4 +1,4 @@
-# Etteplan-more-api
+# Finnish Railway service API app
 API project using VR train service
 
 This project took around 2 weeks of late night coding to complete, and a large portion of it was done with the help of rescourses like facebooks react documentation, stackoverflow, and with the help of classmates and friends.
